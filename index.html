@@ -1,165 +1,218 @@
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        <!-- Optional theme -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css" integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <!-- Optional theme -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css"
+      integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ"
+      crossorigin="anonymous"
+    />
 
-        <style>
-         body {
-             padding-top: 40px;
-             padding-bottom: 40px;
-             background-color: #eee;
-             max-width: 330px;
-             padding: 15px;
-             margin: 0 auto;
-             color: white;
-         }
-        </style>
-        <title>The Meditation Game</title>
-    </head>
+    <style>
+      body {
+        padding-top: 40px;
+        padding-bottom: 40px;
+        background-color: #eee;
+        max-width: 330px;
+        padding: 15px;
+        margin: 0 auto;
+        color: white;
+      }
+    </style>
+    <title>The Meditation Game</title>
+  </head>
 
-    <body>
-        <div class="containter">
-            <button type="button" id="startMeditationButton" class="btn btn-lg btn-primary btn-block"  >Start!</button>
-            <div id="sessionFeedback" style="visibility: hidden">
-                <p class="lead">How did you go?</p>
-                <button type="button" id="goodMeditationButton" class="btn btn-success btn-block">Good</button>
-                <button type="button" id="badMeditationButton" class="btn btn-danger btn-block">Bad</button>
-            </div>
-            <p class="lead">Level: <a id="level">1</a></p>
-            <p class="lead">Streak: <a id="streak">0</a></p>
-            <a id="setLevelButton">Jump to Level</a>
-        </div>
+  <body>
+    <div class="containter">
+      <button
+        type="button"
+        id="startMeditationButton"
+        class="btn btn-lg btn-primary btn-block"
+      >
+        Start!
+      </button>
+      <div id="sessionFeedback" style="visibility: hidden">
+        <p class="lead">How did you go?</p>
+        <button
+          type="button"
+          id="goodMeditationButton"
+          class="btn btn-success btn-block"
+        >
+          Good
+        </button>
+        <button
+          type="button"
+          id="badMeditationButton"
+          class="btn btn-danger btn-block"
+        >
+          Bad
+        </button>
+      </div>
+      <p class="lead">Level: <a id="level">1</a></p>
+      <p class="lead">Streak: <a id="streak">0</a></p>
+      <a id="setLevelButton">Jump to Level</a>
+    </div>
 
-        <script crossorigin src="https://meditation-game.s3.amazonaws.com/NoSleep.min.js"></script>
+    <script
+      crossorigin
+      src="https://meditation-game.s3.amazonaws.com/NoSleep.min.js"
+    ></script>
 
-        <script type="text/javascript">
+    <script type="text/javascript">
+      document
+        .getElementById("startMeditationButton")
+        .addEventListener("click", startMeditation);
+      document
+        .getElementById("goodMeditationButton")
+        .addEventListener("click", goodMeditation);
+      document
+        .getElementById("badMeditationButton")
+        .addEventListener("click", badMeditation);
+      document
+        .getElementById("setLevelButton")
+        .addEventListener("click", jumpToLevel);
 
-         document.getElementById("startMeditationButton").addEventListener("click", startMeditation);
-         document.getElementById("goodMeditationButton").addEventListener("click", goodMeditation);
-         document.getElementById("badMeditationButton").addEventListener("click", badMeditation);
-         document.getElementById("setLevelButton").addEventListener("click", jumpToLevel);
+      const BACKGROUNDS = [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Hommage1.jpg/240px-Hommage1.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/%27Yearning_for_a_Pleasurable_Place%27_in_%27Mountains_of_the_Heart%27_by_Kameda_B%C3%B4sai%2C_1816.jpg/169px-%27Yearning_for_a_Pleasurable_Place%27_in_%27Mountains_of_the_Heart%27_by_Kameda_B%C3%B4sai%2C_1816.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/The_Paradise.JPG/239px-The_Paradise.JPG",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Little_girl_yokai_and_dragonfly.jpg/240px-Little_girl_yokai_and_dragonfly.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Anastasiya_Markovich_Traveller.jpg/195px-Anastasiya_Markovich_Traveller.jpg"
+      ];
+      const GONG_SOUND_FILE =
+        "http://www.buddhanet.net/filelib/audio/gong-burmese.wav";
+      const LEVEL_COOKIE = "meditation-game-level-cookie";
+      const STREAK_COOKIE = "meditation-game-streak-cookie";
+      const TIME_INCREMENT = 10 * 1000;
 
-         const BACKGROUNDS = [
-             "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Hommage1.jpg/240px-Hommage1.jpg",
-             "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/%27Yearning_for_a_Pleasurable_Place%27_in_%27Mountains_of_the_Heart%27_by_Kameda_B%C3%B4sai%2C_1816.jpg/169px-%27Yearning_for_a_Pleasurable_Place%27_in_%27Mountains_of_the_Heart%27_by_Kameda_B%C3%B4sai%2C_1816.jpg",
-             "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/The_Paradise.JPG/239px-The_Paradise.JPG",
-             "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Little_girl_yokai_and_dragonfly.jpg/240px-Little_girl_yokai_and_dragonfly.jpg",
-             "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Anastasiya_Markovich_Traveller.jpg/195px-Anastasiya_Markovich_Traveller.jpg",
-         ];
-         const GONG_SOUND_FILE = 'http://www.buddhanet.net/filelib/audio/gong-burmese.wav';
-         const LEVEL_COOKIE = "meditation-game-level-cookie";
-         const STREAK_COOKIE = "meditation-game-streak-cookie";
-         const TIME_INCREMENT = 10 * 1000;
+      // Initial setup on page load
+      updateCounters();
+      setBackground(getLevel());
 
-         // Initial setup on page load
-         updateCounters();
-         setBackground(getLevel());
+      function getLevel() {
+        return parseInt(getCookie(LEVEL_COOKIE)) || 1;
+      }
 
-         function getLevel() {
-             return parseInt(getCookie(LEVEL_COOKIE)) || 1;
-         }
+      function getStreak() {
+        return parseInt(getCookie(STREAK_COOKIE)) || 0;
+      }
 
-         function getStreak() {
-             return parseInt(getCookie(STREAK_COOKIE)) || 0;
-         }
+      function startMeditation(event) {
+        keepAwake();
 
-         function startMeditation(event) {
-             keepAwake();
+        // https://stackoverflow.com/questions/31776548/why-cant-javascript-play-audio-files-on-iphone-safari
+        const audio = new Audio();
+        audio.play();
 
-             // https://stackoverflow.com/questions/31776548/why-cant-javascript-play-audio-files-on-iphone-safari
-             const audio = new Audio();
-             audio.play();
+        const sessionFeedback = document.getElementById("sessionFeedback");
+        document.getElementById("sessionFeedback").style.visibility = "hidden";
+        document.getElementById("startMeditationButton").style.visibility =
+          "hidden";
 
-             const sessionFeedback = document.getElementById("sessionFeedback")
-             document.getElementById("sessionFeedback").style.visibility="hidden";
-             document.getElementById("startMeditationButton").style.visibility="hidden";
+        const level = getLevel();
+        setTimeout(() => {
+          audio.src = GONG_SOUND_FILE;
+          audio.play();
+          document.getElementById("startMeditationButton").style.visibility =
+            "visible";
+          document.getElementById("sessionFeedback").style.visibility =
+            "visible";
+        }, TIME_INCREMENT * level);
+      }
 
-             const level = getLevel();
-             setTimeout(() => {
-                 audio.src = GONG_SOUND_FILE;
-                 audio.play();
-                 document.getElementById("startMeditationButton").style.visibility="visible";
-                 document.getElementById("sessionFeedback").style.visibility="visible";
-             }, TIME_INCREMENT * level);
-         }
+      function goodMeditation() {
+        const streak = getStreak();
+        setStreak(streak + 1);
+        document.getElementById("sessionFeedback").style.visibility = "hidden";
+      }
 
-         function goodMeditation() {
-             const streak = getStreak();
-             setStreak(streak + 1);
-             document.getElementById("sessionFeedback").style.visibility="hidden";
-         }
+      function badMeditation() {
+        setStreak(0);
+        document.getElementById("sessionFeedback").style.visibility = "hidden";
+      }
 
-         function badMeditation() {
-             setStreak(0);
-             document.getElementById("sessionFeedback").style.visibility="hidden";
-         }
+      function jumpToLevel() {
+        let newLevel = prompt("What level?");
+        if (newLevel) {
+          newLevel = parseInt(newLevel);
+          setLevel(newLevel);
+          setStreak(0);
+        }
+      }
 
-         function jumpToLevel() {
-             let newLevel = prompt("What level?");
-             if (newLevel) {
-                 newLevel = parseInt(newLevel);
-                 setLevel(newLevel);
-                 setStreak(0);
-             }
-         }
+      function setLevel(newLevel) {
+        setBackground(newLevel);
+        setCookie(LEVEL_COOKIE, newLevel);
+        updateCounters();
+      }
 
-         function setLevel(newLevel) {
-             setBackground(newLevel);
-             setCookie(LEVEL_COOKIE, newLevel);
-             updateCounters();
-         }
+      function setStreak(newStreak) {
+        if (newStreak === 3) {
+          const level = getLevel();
+          setLevel(level + 1);
+          streak = 0;
+        }
+        setCookie(STREAK_COOKIE, newStreak);
+        updateCounters();
+      }
 
-         function setStreak(newStreak) {
-             if (newStreak === 3) {
-                 const level = getLevel();
-                 setLevel(level + 1);
-                 streak = 0;
-             }
-             setCookie(STREAK_COOKIE, newStreak);
-             updateCounters();
-         }
+      function setBackground(level) {
+        document.body.style.backgroundImage = `url("${
+          BACKGROUNDS[(level - 1) % BACKGROUNDS.length]
+        }")`;
+        document.body.style.backgroundRepeat = "no-repeat";
+        document.body.style.backgroundSize = "cover";
+      }
 
-         function setBackground(level) {
-             document.body.style.backgroundImage = `url("${BACKGROUNDS[(level - 1) % BACKGROUNDS.length]}")`;
-             document.body.style.backgroundRepeat = "no-repeat";
-             document.body.style.backgroundSize = "cover";
-         }
+      function updateCounters() {
+        const level = getLevel();
+        const streak = getStreak();
+        document.getElementById("streak").innerHTML = streak;
+        document.getElementById("level").innerHTML = level;
+      }
 
-         function updateCounters() {
-             const level = getLevel();
-             const streak = getStreak();
-             document.getElementById("streak").innerHTML = streak;
-             document.getElementById("level").innerHTML = level;
-         }
+      function setCookie(name, value, days = 7, path = "/") {
+        // https://stackoverflow.com/questions/4825683/how-do-i-create-and-read-a-value-from-cookie
+        const expires = new Date(Date.now() + days * 864e5).toUTCString();
+        document.cookie =
+          name +
+          "=" +
+          encodeURIComponent(value) +
+          "; expires=" +
+          expires +
+          "; path=" +
+          path;
+      }
 
-         function setCookie (name, value, days = 7, path = '/') {
-             // https://stackoverflow.com/questions/4825683/how-do-i-create-and-read-a-value-from-cookie
-             const expires = new Date(Date.now() + days * 864e5).toUTCString()
-             document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=' + path
-         };
+      function getCookie(name) {
+        // https://stackoverflow.com/questions/4825683/how-do-i-create-and-read-a-value-from-cookie
+        return document.cookie.split("; ").reduce((r, v) => {
+          const parts = v.split("=");
+          return parts[0] === name ? decodeURIComponent(parts[1]) : r;
+        }, "");
+      }
 
-         function getCookie (name) {
-             // https://stackoverflow.com/questions/4825683/how-do-i-create-and-read-a-value-from-cookie
-             return document.cookie.split('; ').reduce((r, v) => {
-                 const parts = v.split('=')
-                 return parts[0] === name ? decodeURIComponent(parts[1]) : r
-             }, '')
-         };
-
-         function keepAwake(){
-             // https://github.com/richtr/NoSleep.js/
-             var noSleep = new NoSleep();
-             document.addEventListener('click', function enableNoSleep() {
-                 document.removeEventListener('click', enableNoSleep, false);
-                 noSleep.enable();
-             }, false);
-         }
-
-        </script>
-    </body>
+      function keepAwake() {
+        // https://github.com/richtr/NoSleep.js/
+        var noSleep = new NoSleep();
+        document.addEventListener(
+          "click",
+          function enableNoSleep() {
+            document.removeEventListener("click", enableNoSleep, false);
+            noSleep.enable();
+          },
+          false
+        );
+      }
+    </script>
+  </body>
 </html>
-
